@@ -169,6 +169,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.contenttypes',
     'debug_toolbar',
+    'gunicorn',
     'social_auth',
     'south',
 )
