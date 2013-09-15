@@ -24,7 +24,6 @@ from tastypie.utils import trailing_slash
 from tastypie import fields
 
 from july.people.models import Commit, Project, Location, Team, Language
-from july.game.models import Game, Board
 from july.models import User
 
 EMAIL_MATCH = re.compile('<(.+?)>')
@@ -112,42 +111,6 @@ class ProjectResource(ModelResource):
         ]
 
 
-class LargeBoardResource(ModelResource):
-    project = fields.ForeignKey(ProjectResource, 'project',
-                                blank=True, null=True, full=True)
-
-    class Meta:
-        game = Game.active_or_latest()
-        # TODO: make this configurable!
-        queryset = Board.objects.filter(
-            game=game, project__watchers__gte=100,
-            project__active=True).select_related('project')
-
-
-class MediumBoardResource(ModelResource):
-    project = fields.ForeignKey(ProjectResource, 'project',
-                                blank=True, null=True, full=True)
-
-    class Meta:
-        game = Game.active_or_latest()
-        # TODO: make this configurable!
-        queryset = Board.objects.filter(
-            game=game, project__watchers__gte=10,
-            project__watchers__lt=100,
-            project__active=True).select_related('project')
-
-
-class SmallBoardResource(ModelResource):
-    project = fields.ForeignKey(ProjectResource, 'project',
-                                blank=True, null=True, full=True)
-
-    class Meta:
-        game = Game.active_or_latest()
-        # TODO: make this configurable!
-        queryset = Board.objects.filter(
-            game=game, project__watchers__lt=10,
-            project__active=True).select_related('project')
-
 
 class LocationResource(ModelResource):
 
@@ -197,20 +160,6 @@ class CommitResource(ModelResource):
                 self.wrap_view('get_calendar'),
                 name="api_get_calendar"),
         ]
-
-    def get_calendar(self, request, **kwargs):
-        self.method_check(request, allowed=['get'])
-        self.throttle_check(request)
-        filters = {}
-
-        game = Game.active_or_latest()
-        username = request.GET.get('username')
-        if username:
-            filters['user__username'] = username
-
-        # user = kwargs.get('user', None)
-        calendar = Commit.calendar(game=game, **filters)
-        return self.create_response(request, calendar)
 
     def gravatar(self, email):
         """Return a link to gravatar image."""
