@@ -2,6 +2,12 @@ from django.conf.urls import patterns, include, url
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
 
+
+##TODO REMOVE THIS LINE IN PRODUCTION
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+
+
 from tastypie.api import Api
 
 from july import api
@@ -56,3 +62,7 @@ urlpatterns = patterns(
 
 
 )
+
+
+##TODO REMOVE THIS LINE IN PRODUCTION
+urlpatterns += staticfiles_urlpatterns()
