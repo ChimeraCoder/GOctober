@@ -20,12 +20,11 @@ User = get_user_model()
 
 def index(request):
     """Render the home page"""
-    game = Game.active_or_latest()
-    stats = game.histogram if game else []
+    stats = []
 
     ctx = Context({
         'stats': json.dumps(stats),
-        'game': game,
+        'game': None,
         'total': sum(stats),
         'user': request.user,
         'MEDIA_URL': settings.MEDIA_URL,
